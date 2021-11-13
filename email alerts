@@ -1,0 +1,23 @@
+For email alerting
+
+go to 
+
+alerts bell >
+notification channels >
+new channel >
+name : your choice
+type : email
+addresses : give the receiver email id
+optional email settings
+enable single email
+notification settings
+enable default
+enable include image
+disable resolve message
+enable send reminders
+set reminder for every minutes of your choice
+test 
+and 
+save
+
+

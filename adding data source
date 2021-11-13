@@ -1,0 +1,11 @@
+Adding Data sources to grafana dashboard
+
+In side panel go to settings gear > configuration > datasources >
+> Add data source > select prometheus
+
+URL box http://server_ip of prometheus:9090
+
+then 
+
+save and test 
+

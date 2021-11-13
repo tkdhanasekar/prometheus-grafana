@@ -1,0 +1,22 @@
+/etc/grafana/grafana.ini smtp config section
+
+#################################### SMTP / Emailing ##########################
+[smtp]
+enabled = true
+host = smtp.gmail.com:587
+user = tkdhanasekar@gmail.com
+# If the password contains # or ; you have to wrap it with triple quotes. Ex """#password;"""
+password = """Password"""
+;cert_file =
+;key_file =
+skip_verify = true
+from_address = tkdhanasekar
+from_name = Server_Hardware_Alerts
+# EHLO identity in SMTP dialog (defaults to instance_name)
+;ehlo_identity = dashboard.example.com
+# SMTP startTLS policy (defaults to 'OpportunisticStartTLS')
+;startTLS_policy = NoStartTLS
+
+[emails]
+welcome_email_on_sign_up = true
+;templates_pattern = emails/*.html

@@ -1,0 +1,9 @@
+installation of image rendering plugin in command line
+
+# grafana-cli plugins install grafana-image-renderer
+
+or 
+
+GUI - install through grafana dashboard plugins
+go to Server Admin > plugins > search for grafana image renderer
+and install it 

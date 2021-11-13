@@ -1,0 +1,17 @@
+Grafana Alert Mail takes to localhost issue
+
+By Default in Grafana Alerts Mail
+“go to the Alerts page” takes to localhost:3000
+to solve this issue
+in the below file put an entry
+
+# vim /etc/grafana/grafana.ini
+root_url = http://ip_of_grafana_server:3000
+
+:wq! save and exit
+
+restart the grafana server
+# systemctl restart grafana-server
+
+Now the go the Alerts page and view your Alert rule
+takes to the Grafana server login page

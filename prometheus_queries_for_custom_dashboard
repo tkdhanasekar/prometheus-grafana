@@ -1,0 +1,22 @@
+Prometheus queries to get Customised dashboards
+
+All Linux CPU only dashboard
+avg(node_load5{job="$job"}) /  count(count(node_cpu_seconds_total{job="$job"}) by (cpu)) * 100
+
+All Linux RAM only dashboard
+((node_memory_MemTotal_bytes{job="$job"} - node_memory_MemFree_bytes{job="$job"}) / (node_memory_MemTotal_bytes{job="$job"} )) * 100
+
+All Linux HDD only dashboard
+100 - ((node_filesystem_avail_bytes{job="$job",mountpoint="/",fstype!="rootfs"} * 100) / node_filesystem_size_bytes{job="$job",mountpoint="/",fstype!="rootfs"})
+
+
+Linux Server Hardware Alerts dashboard
+
+CPU Alerts
+100 - (avg by (instance) (irate(node_cpu_seconds_total{mode="idle"}[1m])) * 100)
+
+RAM Alerts
+100 - ((node_memory_MemAvailable_bytes * 100) / node_memory_MemTotal_bytes)
+
+HDD Alerts
+100 - ((node_filesystem_avail_bytes{mountpoint="/",fstype!="rootfs"} * 100) / node_filesystem_size_bytes{mountpoint="/",fstype!="rootfs"})
