@@ -1,3 +1,5 @@
+# vim /etc/prometheus/prometheus.yml
+
 global:
   scrape_interval: 10s
 
