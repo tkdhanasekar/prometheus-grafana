@@ -1,3 +1,5 @@
+# vim /usr/local/bin/alertmanager/alertmanager.yml
+
 global:
   resolve_timeout: 5m
 
