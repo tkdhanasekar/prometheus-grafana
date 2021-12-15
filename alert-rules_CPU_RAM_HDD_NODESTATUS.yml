@@ -1,3 +1,5 @@
+# vim /etc/prometheus/rules/alert-rules.yml
+
 groups:
 - name: alert-rules
   rules:
