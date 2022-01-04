@@ -1,5 +1,5 @@
   - alert: WindowsServerCollectorError
-    expr: windows_exporter_collector_success == 0
+    expr: wmi_exporter_collector_success == 0
     for: 0m
     labels:
       severity: critical
@@ -8,7 +8,7 @@
       description: "Collector {{ $labels.collector }} was not successful\n  VALUE = {{ $value }}\n  LABELS = {{ $labels }}"
 
   - alert: WindowsServerServiceStatus
-    expr: windows_service_status{status="ok"} != 1
+    expr: wmi_service_status{status="ok"} != 1
     for: 1m
     labels:
       severity: critical
@@ -17,7 +17,7 @@
       description: "Windows Service state is not OK\n  VALUE = {{ $value }}\n  LABELS = {{ $labels }}"
 
   - alert: WindowsServerCpuUsage
-    expr: 100 - (avg by (instance) (rate(windows_cpu_time_total{mode="idle"}[2m])) * 100) > 85
+    expr: 100 - (avg by (instance) (rate(wmi_cpu_time_total{mode="idle"}[2m])) * 100) > 85
     for: 0m
     labels:
       severity: warning
@@ -26,7 +26,7 @@
       description: "CPU Usage is more than 85%\n  VALUE = {{ $value }}\n  LABELS = {{ $labels }}"
 
   - alert: WindowsServerMemoryUsage
-    expr: 100 - ((windows_os_physical_memory_free_bytes / windows_cs_physical_memory_bytes) * 100) > 85
+    expr: 100 - ((wmi_os_physical_memory_free_bytes / wmi_cs_physical_memory_bytes) * 100) > 85
     for: 2m
     labels:
       severity: warning
@@ -35,7 +35,7 @@
       description: "Memory usage is more than 85%\n  VALUE = {{ $value }}\n  LABELS = {{ $labels }}"
 
   - alert: WindowsServerDiskSpaceUsage
-    expr: 100.0 - 100 * ((windows_logical_disk_free_bytes / 1024 / 1024 ) / (windows_logical_disk_size_bytes / 1024 / 1024)) > 85
+    expr: 100.0 - 100 * ((wmi_logical_disk_free_bytes / 1024 / 1024 ) / (wmi_logical_disk_size_bytes / 1024 / 1024)) > 85
     for: 2m
     labels:
       severity: critical
