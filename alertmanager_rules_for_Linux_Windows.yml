@@ -74,6 +74,5 @@ groups:
     annotations:
       description: "Disk usage is more than\n  VALUE = {{ $value }}"
 
-100﻿ - ﻿(﻿(﻿node_filesystem_avail_bytes﻿{﻿mountpoint﻿=﻿"/"﻿,﻿fstype﻿!=﻿"rootfs"﻿}﻿ * ﻿100﻿)﻿ / node_filesystem_size_bytes﻿{﻿mountpoint﻿=﻿"/"﻿,﻿fstype﻿!=﻿"rootfs"﻿}﻿)
-(node_filesystem_avail_bytes * 100) / node_filesystem_size_bytes < 15 and ON (instance, device, mountpoint) node_filesystem_readonly == 0
+
 
