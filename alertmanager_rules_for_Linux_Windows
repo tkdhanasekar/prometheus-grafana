@@ -1,0 +1,79 @@
+groups:
+- name: alert-rules
+  rules:
+  - alert: ExporterDown
+    expr: up == 0
+    for: 2m
+    labels:
+      severity: critical
+    annotations:
+      description: "Node {{ $labels.job }} running on {{ $labels.instance }} has been down"
+
+  - alert: Host Out Of DiskSpace
+    expr: 100 - ((node_filesystem_avail_bytes{mountpoint="/",fstype!="tmpfs"} * 100) / node_filesystem_size_bytes{mountpoint="/",fstype!="tmpfs"}) > 85
+    for: 2m
+    labels:
+      severity: warning
+    annotations:
+      description: "Disk filled\n  VALUE = {{ $value }}"
+
+
+  - alert: Host Out Of Memory
+    expr: node_memory_MemAvailable_bytes / node_memory_MemTotal_bytes * 100 < 15
+    for: 5m
+    labels:
+      severity: warning
+    annotations:
+      description: "Memory remaining\n  VALUE = {{ $value }}"
+
+  - alert: HostHighCpuLoad
+    expr: 100 - (avg by(instance) (rate(node_cpu_seconds_total{mode="idle"}[2m])) * 100) > 85
+    for: 5m
+    labels:
+      severity: warning
+    annotations:
+      description: "CPU load\n  VALUE = {{ $value }}"
+
+  - alert: Windows Server Collector Error
+    expr: wmi_exporter_collector_success == 0
+    for: 0m
+    labels:
+      severity: critical
+    annotations:
+      description: "Collector {{ $labels.collector }} was not successful\n  VALUE = {{ $value }}\n  LABELS = {{ $labels }}"
+
+  - alert: Windows Server Service Status
+    expr: wmi_service_status{status="ok"} != 1
+    for: 1m
+    labels:
+      severity: critical
+    annotations:
+      description: "Windows Service state is not OK\n  VALUE = {{ $value }}"
+
+  - alert: Windows Server CPU Usage
+    expr: 100 - (avg by (instance) (rate(wmi_cpu_time_total{mode="idle"}[2m])) * 100) > 85
+    for: 5m
+    labels:
+      severity: warning
+    annotations:
+      description: "CPU Usage is more than\n  VALUE = {{ $value }}"
+
+  - alert: Windows Server Memory Usage
+    expr: 100 - ((wmi_os_physical_memory_free_bytes / wmi_cs_physical_memory_bytes) * 100) > 85
+    for: 5m
+    labels:
+      severity: warning
+    annotations:
+      description: "Memory usage is more than\n  VALUE = {{ $value }}"
+  
+  - alert: Windows Server DiskSpace Usage
+    expr: 100.0 - 100 * ((wmi_logical_disk_free_bytes / 1024 / 1024 ) / (wmi_logical_disk_size_bytes / 1024 / 1024)) > 85
+    for: 5m
+    labels:
+      severity: critical
+    annotations:
+      description: "Disk usage is more than\n  VALUE = {{ $value }}"
+
+100﻿ - ﻿(﻿(﻿node_filesystem_avail_bytes﻿{﻿mountpoint﻿=﻿"/"﻿,﻿fstype﻿!=﻿"rootfs"﻿}﻿ * ﻿100﻿)﻿ / node_filesystem_size_bytes﻿{﻿mountpoint﻿=﻿"/"﻿,﻿fstype﻿!=﻿"rootfs"﻿}﻿)
+(node_filesystem_avail_bytes * 100) / node_filesystem_size_bytes < 15 and ON (instance, device, mountpoint) node_filesystem_readonly == 0
+
