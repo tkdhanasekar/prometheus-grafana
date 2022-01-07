@@ -1,3 +1,4 @@
+# mkdir /etc/prometheus/rules
 # vim /etc/prometheus/rules/alert-rules.yml
 
 groups:
