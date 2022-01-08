@@ -37,7 +37,7 @@ scrape_configs:
   - job_name: 'prometheus_server'
     scrape_interval: 5s
     static_configs:
-      - targets: ['prometheus_server_ip:9100']
+      - targets: ['172.104.43.189:9100']
       
 :wq! save and exit
 
@@ -87,7 +87,7 @@ Grafana Installation:
 # systemctl enable grafana-server.service
 # systemctl status grafana-server.service
 # grafana-server -v
-http://server_ip:3000
+http://172.104.43.189:3000
 
 
 Node_exporter Installation:
@@ -116,7 +116,7 @@ WantedBy=multi-user.target
 # systemctl start node_exporter
 # systemctl enable node_exporter
 # systemctl status node_exporter
-http://ip_of_server:9100/metrics
+http://172.104.43.189:9100/metrics
 
 
 Alertmanager Installation:
@@ -145,7 +145,9 @@ WantedBy=multi-user.target
 # systemctl daemon-reload
 # systemctl enable alertmanager.service
 # systemctl status alertmanager.service
-http://server_ip:9093
+http://172.104.43.189:9093
+http://172.104.43.189:9090/alerts
+http://172.104.43.189:9090/targets
 
 
 alertmanager smtp config:
@@ -161,10 +163,10 @@ receivers:
 - name: 'email'
   email_configs:
   - to: tkdhanasekar@gmail.com
-    from: 'tkdana@gmail.com'
+    from: 'ktdhanasekar@gmail.com'
     smarthost: smtp.gmail.com:587
-    auth_username: 'tkdana@gmail.com'
-    auth_identity: 'tkdana@gmail.com'
+    auth_username: 'ktdhanasekar@gmail.com'
+    auth_identity: 'ktdhanasekar@gmail.com'
     auth_password: 'gmdsr123!@#'
     send_resolved: true
 inhibit_rules:
@@ -272,7 +274,7 @@ add the client details in prometheus server scrape_configs
   - job_name: 'client'
     scrape_interval: 5s
     static_configs:
-      - targets: ['client_ip:9100']
+      - targets: ['172.104.43.240:9100']
 :wq! save and exit
 
 # systemctl restart prometheus
@@ -324,7 +326,7 @@ add the client details in prometheus server scrape_configs
   - job_name: 'apache1'
     scrape_interval: 5s
     static_configs:
-      - targets: ['apache_server_ip:9117']
+      - targets: ['172.104.43.82:9117']
 
 :wq! save and exit
       
