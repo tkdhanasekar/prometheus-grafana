@@ -1,0 +1,527 @@
+Prometheus Installation:
+------------------------
+
+# apt update -y
+# wget https://github.com/prometheus/prometheus/releases/download/v2.25.2/prometheus-2.25.2.linux-amd64.tar.gz
+# tar -xvf prometheus-2.25.2.linux-amd64.tar.gz
+# mv prometheus-2.25.2.linux-amd64 prometheus-files
+# useradd --no-create-home --shell /bin/false prometheus
+# mkdir /etc/prometheus
+# mkdir /var/lib/prometheus
+# groupadd prometheus
+# chown prometheus:prometheus /etc/prometheus
+# chown prometheus:prometheus /var/lib/prometheus
+# cp prometheus-files/prometheus /usr/local/bin/
+# cp prometheus-files/promtool /usr/local/bin/
+# chown prometheus:prometheus /usr/local/bin/prometheus
+# chown prometheus:prometheus /usr/local/bin/promtool
+# cp -r prometheus-files/consoles /etc/prometheus
+# cp -r prometheus-files/console_libraries /etc/prometheus
+# chown -R prometheus:prometheus /etc/prometheus/consoles
+# chown -R prometheus:prometheus /etc/prometheus/console_libraries
+
+Setup Prometheus Configuration
+Create the prometheus.yml file
+
+# vim /etc/prometheus/prometheus.yml
+
+global:
+  scrape_interval: 10s
+
+scrape_configs:
+  - job_name: 'prometheus'
+    scrape_interval: 5s
+    static_configs:
+      - targets: ['localhost:9090']
+
+  - job_name: 'prometheus_server'
+    scrape_interval: 5s
+    static_configs:
+      - targets: ['prometheus_server_ip:9100']
+      
+:wq! save and exit
+
+# chown prometheus:prometheus /etc/prometheus/prometheus.yml
+
+Setup Prometheus Service File
+Create a prometheus service file.
+
+# vim /etc/systemd/system/prometheus.service
+
+[Unit]
+Description=Prometheus
+Wants=network-online.target
+After=network-online.target
+
+[Service]
+User=prometheus
+Group=prometheus
+Type=simple
+ExecStart=/usr/local/bin/prometheus \
+    --config.file /etc/prometheus/prometheus.yml \
+    --storage.tsdb.path /var/lib/prometheus/ \
+    --storage.tsdb.retention.time=7d \
+    --storage.tsdb.retention.size=8GB \
+    --web.console.templates=/etc/prometheus/consoles \
+    --web.console.libraries=/etc/prometheus/console_libraries
+
+[Install]
+WantedBy=multi-user.target
+:wq! save and exit
+
+# systemctl daemon-reload
+# systemctl start prometheus
+# systemctl enable prometheus
+# systemctl status prometheus
+http://server_ip:9090/graph
+
+
+Grafana Installation:
+---------------------
+# apt update -y
+# wget -q -O - https://packages.grafana.com/gpg.key | sudo apt-key add -
+# add-apt-repository "deb https://packages.grafana.com/oss/deb stable main"
+# apt update -y
+# apt-get -y install grafana
+# systemctl start grafana-server.service
+# systemctl enable grafana-server.service
+# systemctl status grafana-server.service
+# grafana-server -v
+http://server_ip:3000
+
+
+Node_exporter Installation:
+---------------------------
+# wget https://github.com/prometheus/node_exporter/releases/download/v1.1.2/node_exporter-1.1.2.linux-amd64.tar.gz
+# tar -xvf node_exporter-1.1.2.linux-amd64.tar.gz
+# mv node_exporter-1.1.2.linux-amd64/node_exporter /usr/local/bin/
+# useradd -rs /bin/false node_exporter
+# groupadd node_exporter
+
+create node_exporter service file
+# vim /etc/systemd/system/node_exporter.service
+[Unit]
+Description=Node Exporter
+After=network.target
+[Service]
+User=node_exporter
+Group=node_exporter
+Type=simple
+ExecStart=/usr/local/bin/node_exporter
+[Install]
+WantedBy=multi-user.target
+:wq! save and exit
+
+# systemctl daemon-reload
+# systemctl start node_exporter
+# systemctl enable node_exporter
+# systemctl status node_exporter
+http://ip_of_server:9100/metrics
+
+
+Alertmanager Installation:
+--------------------------
+# apt update -y
+# wget https://github.com/prometheus/alertmanager/releases/download/v0.23.0/alertmanager-0.23.0.linux-amd64.tar.gz
+# tar -xvf alertmanager-0.23.0.linux-amd64.tar.gz
+# cp -r . /usr/local/bin/alertmanager
+
+create alertmanager service file
+# vim /etc/systemd/system/alertmanager.service
+[Unit]
+Description=Prometheus Alert Manager Service
+After=network.target
+
+[Service]
+Type=simple
+ExecStart=/usr/local/bin/alertmanager/alertmanager \
+    --config.file=/usr/local/bin/alertmanager/alertmanager.yml \
+    --cluster.advertise-address="prometheus_server_ip:9093"
+
+[Install]
+WantedBy=multi-user.target
+:wq! save and exit
+
+# systemctl daemon-reload
+
+
+# systemctl enable alertmanager.service
+# systemctl status alertmanager.service
+http://server_ip:9093
+
+
+# /usr/local/bin/alertmanager/amtool check-config /usr/local/bin/alertmanager/alertmanager.yml
+
+
+alertmanager smtp config:
+-------------------------
+# vim 
+route:
+  group_by: ['alertname']
+  group_wait: 10s
+  group_interval: 10s
+  repeat_interval: 24h
+  receiver: 'email'
+receivers:
+- name: 'email'
+  email_configs:
+  - to: tkdhanasekar@gmail.com
+    from: 'tkdana@gmail.com'
+    smarthost: smtp.gmail.com:587
+    auth_username: 'tkdana@gmail.com'
+    auth_identity: 'tkdana@gmail.com'
+    auth_password: 'gmdsr123!@#'
+    send_resolved: true
+inhibit_rules:
+  - source_match:
+      severity: 'critical'
+    target_match:
+      severity: 'warning'
+    equal: ['alertname', 'dev', 'instance']
+:wq! save and exit
+
+Alertmanager rules:
+-------------------
+# mkdir /etc/prometheus/rules
+# vim /etc/prometheus/rules/alert-rules.yml
+groups:
+- name: alert-rules
+  rules:
+  - alert: ExporterDown
+    expr: up == 0
+    for: 2m
+    labels:
+      severity: critical
+    annotations:
+      description: "Node {{ $labels.job }} running on {{ $labels.instance }} has been down"
+
+  - alert: Host Out Of DiskSpace
+    expr: 100 - ((node_filesystem_avail_bytes{mountpoint="/",fstype!="tmpfs"} * 100) / node_filesystem_size_bytes{mountpoint="/",fstype!="tmpfs"}) > 85
+    for: 2m
+    labels:
+      severity: warning
+    annotations:
+      description: "Disk filled\n  VALUE = {{ $value }}"
+
+
+  - alert: Host Out Of Memory
+    expr: node_memory_MemAvailable_bytes / node_memory_MemTotal_bytes * 100 < 15
+    for: 5m
+    labels:
+      severity: warning
+    annotations:
+      description: "Memory remaining\n  VALUE = {{ $value }}"
+
+  - alert: HostHighCpuLoad
+    expr: 100 - (avg by(instance) (rate(node_cpu_seconds_total{mode="idle"}[2m])) * 100) > 85
+    for: 5m
+    labels:
+      severity: warning
+    annotations:
+      description: "CPU load\n  VALUE = {{ $value }}"
+
+:wq! save and exit
+
+# systemctl start alertmanager.service
+# systemctl status alertmanager.service
+
+
+Add alertmanager parameters in /etc/prometheus/prometheus.yml:
+--------------------------------------------------------------
+
+# Alertmanager configuration
+alerting:
+  alertmanagers:
+  - static_configs:
+    - targets:
+       - localhost:9093
+
+# Load rules once and periodically evaluate them according to the global 'evaluation_interval'.
+rule_files:
+  - "/etc/prometheus/rules/*.yml"
+
+:wq! save and exit
+
+
+Node_exporter in client machine:
+--------------------------------
+# apt update -y
+# wget https://github.com/prometheus/node_exporter/releases/download/v1.1.2/node_exporter-1.1.2.linux-amd64.tar.gz
+# tar -xvf node_exporter-1.1.2.linux-amd64.tar.gz
+# mv node_exporter-1.1.2.linux-amd64/node_exporter /usr/local/bin/
+# useradd -rs /bin/false node_exporter
+# groupadd node_exporter
+# vim /etc/systemd/system/node_exporter.service
+[Unit]
+Description=Node Exporter
+After=network.target
+[Service]
+User=node_exporter
+Group=node_exporter
+Type=simple
+ExecStart=/usr/local/bin/node_exporter
+[Install]
+WantedBy=multi-user.target
+
+:wq! save and exit
+
+# systemctl daemon-reload
+# systemctl start node_exporter
+# systemctl enable node_exporter
+# systemctl status node_exporter
+
+add the client details in prometheus server scrape_configs
+/etc/prometheus/prometheus.yml
+
+# vim /etc/prometheus/prometheus.yml
+  - job_name: 'client'
+    scrape_interval: 5s
+    static_configs:
+      - targets: ['client_ip:9100']
+:wq! save and exit
+
+# systemctl restart prometheus
+# systemctl status prometheus
+
+
+Apache_node exporter:
+---------------------
+
+# apt update -y
+# apt install apache2 -y
+# groupadd --system apache_exporter
+# useradd -s /bin/false -r -g apache_exporter apache_exporter
+# mkdir /downloads/apache_exporter -p
+# cd /downloads/apache_exporter
+# wget https://github.com/Lusitaniae/apache_exporter/releases/download/v0.5.0/apache_exporter-0.5.0.linux-amd64.tar.gz
+# tar -zxvf apache_exporter-0.5.0.linux-amd64.tar.gz
+# cd apache_exporter-0.5.0.linux-amd64/
+# apache_exporter --version
+# cp apache_exporter-0.5.0.linux-amd64/apache_exporter /usr/local/bin
+# chmod +x /usr/local/bin/apache_exporter
+
+# vim /etc/systemd/system/apache_exporter.service
+[Unit]
+Description=Prometheus Apache Exporter
+Wants=network.target
+After=network.target
+
+[Service]
+User=apache_exporter
+Group=apache_exporter
+Type=simple
+ExecStart=/usr/local/bin/apache_exporter
+Restart=always
+
+[Install]
+WantedBy=multi-user.target
+:wq! save and exit
+
+# systemctl daemon-reload
+# systemctl start apache_exporter
+# systemctl enable apache_exporter
+# systemctl status apache_exporter
+
+add the client details in prometheus server scrape_configs
+/etc/prometheus/prometheus.yml
+
+# vim /etc/prometheus/prometheus.yml
+  - job_name: 'apache1'
+    scrape_interval: 5s
+    static_configs:
+      - targets: ['apache_server_ip:9117']
+
+:wq! save and exit
+      
+add apache rules in /etc/prometheus/rules/alert-rules.yml
+# vim /etc/prometheus/rules/alert-rules.yml
+
+  - alert: ApacheDown
+    expr: apache_up == 0
+    for: 0m
+    labels:
+      severity: critical
+    annotations:
+      description: "Apache is down\n  VALUE = {{ $value }}"
+      
+:wq! save and exit
+
+amtool and promtool:
+--------------------
+To check the validation of alertmanager.yml
+# /usr/local/bin/alertmanager/amtool check-config /usr/local/bin/alertmanager/alertmanager.yml
+
+To check for alert rules validation
+# promtool check rules /etc/prometheus/rules/alert-rules.yml
+
+
+
+    
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+validate rules:
+---------------
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
