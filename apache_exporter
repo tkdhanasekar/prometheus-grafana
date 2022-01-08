@@ -1,0 +1,55 @@
+# apt update -y
+# apt install apache2 -y
+# groupadd --system apache_exporter
+# useradd -s /bin/false -r -g apache_exporter apache_exporter
+# mkdir /downloads/apache_exporter -p
+# cd /downloads/apache_exporter
+# wget https://github.com/Lusitaniae/apache_exporter/releases/download/v0.5.0/apache_exporter-0.5.0.linux-amd64.tar.gz
+# tar -zxvf apache_exporter-0.5.0.linux-amd64.tar.gz
+# cd apache_exporter-0.5.0.linux-amd64/
+# apache_exporter --version
+# cp apache_exporter-0.5.0.linux-amd64/apache_exporter /usr/local/bin
+# chmod +x /usr/local/bin/apache_exporter
+
+# vim /etc/systemd/system/apache_exporter.service
+[Unit]
+Description=Prometheus Apache Exporter
+Wants=network.target
+After=network.target
+
+[Service]
+User=apache_exporter
+Group=apache_exporter
+Type=simple
+ExecStart=/usr/local/bin/apache_exporter
+Restart=always
+
+[Install]
+WantedBy=multi-user.target
+:wq! save and exit
+
+# systemctl daemon-reload
+# systemctl start apache_exporter
+# systemctl enable apache_exporter
+# systemctl status apache_exporter
+
+# vim /etc/prometheus/prometheus.yml
+- job_name: 'apache1'
+    scrape_interval: 5s
+    static_configs:
+      - targets: ['139.177.187.86:9117']
+      
+# vim /etc/prometheus/rules/alert-rules.yml
+- alert: ApacheDown
+    expr: apache_up == 0
+    for: 0m
+    labels:
+      severity: critical
+    annotations:
+      description: "Apache is down\n  VALUE = {{ $value }}"
+
+
+
+
+
+
