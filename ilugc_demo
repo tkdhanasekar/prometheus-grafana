@@ -143,8 +143,6 @@ WantedBy=multi-user.target
 :wq! save and exit
 
 # systemctl daemon-reload
-
-
 # systemctl enable alertmanager.service
 # systemctl status alertmanager.service
 http://server_ip:9093
@@ -155,7 +153,7 @@ http://server_ip:9093
 
 alertmanager smtp config:
 -------------------------
-# vim 
+# vim /usr/local/bin/alertmanager/alertmanager.yml
 route:
   group_by: ['alertname']
   group_wait: 10s
