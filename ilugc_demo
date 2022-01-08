@@ -148,9 +148,6 @@ WantedBy=multi-user.target
 http://server_ip:9093
 
 
-# /usr/local/bin/alertmanager/amtool check-config /usr/local/bin/alertmanager/alertmanager.yml
-
-
 alertmanager smtp config:
 -------------------------
 # vim /usr/local/bin/alertmanager/alertmanager.yml
