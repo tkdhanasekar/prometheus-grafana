@@ -211,6 +211,11 @@ http://server_IP:9100/metrics
 :blue_square: __Node Exporter Installation in Client Machines__
 install node_exporter in all client machines
 
+:blue_square: __Add Data sources__
+add data sources \
+add node exporter full 1860 if for dashboard
+
+
 :blue_square: __Alert Manager Installation in Prometheus Server__
 
 update the server
