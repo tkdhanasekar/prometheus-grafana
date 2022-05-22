@@ -161,3 +161,49 @@ grafana-server -v
 to login to grafana dashboard \
 http://ip_of_server:3000/login
 
+
+:blue_square: __Node Exporter Installation__
+download the source
+```
+wget https://github.com/prometheus/node_exporter/releases/download/v1.1.2/node_exporter-1.1.2.linux-amd64.tar.gz
+```
+```
+tar -xvf node_exporter-1.1.2.linux-amd64.tar.gz
+```
+move the folder to the specified location
+```
+mv node_exporter-1.1.2.linux-amd64/node_exporter /usr/local/bin/
+```
+add the user
+```
+useradd -rs /bin/false node_exporter
+```
+create the group
+```
+groupadd node_exporter
+```
+create the node_exporter service file
+```
+vim /etc/systemd/system/node_exporter.service
+
+[Unit]
+Description=Node Exporter
+After=network.target
+[Service]
+User=node_exporter
+Group=node_exporter
+Type=simple
+ExecStart=/usr/local/bin/node_exporter
+[Install]
+WantedBy=multi-user.target
+```
+reload the daemon , start , enable and check the status of node_exporter
+```
+systemctl daemon-reload
+systemctl start node_exporter
+systemctl enable node_exporter
+systemctl status node_exporter
+```
+in the browser \
+http://server_IP:9100/metrics
+
