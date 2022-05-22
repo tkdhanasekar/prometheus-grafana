@@ -320,7 +320,7 @@ groups:
   rules:
   - alert: ExporterDown
     expr: up == 0
-    for: 5m
+    for: 2m
     labels:
       severity: critical
     annotations:
@@ -347,7 +347,7 @@ groups:
 
   - alert: HostHighCpuLoad
     expr: 100 - (avg by(instance) (rate(node_cpu_seconds_total{mode="idle"}[2m])) * 100) > 85
-    for: 0m
+    for: 2m
     labels:
       severity: warning
     annotations:
