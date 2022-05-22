@@ -333,3 +333,9 @@ groups:
       description: "CPU load is > 85%\n  VALUE = {{ $value }}\n  LABELS = {{ $labels }}"
 ```
 
+:blue_square: __customised dashboard__
+```
+https://github.com/tkdhanasekar/prometheus-grafana/blob/main/16.All_Linx_CPU.json
+https://github.com/tkdhanasekar/prometheus-grafana/blob/main/17.All_Linux_RAM.json
+https://github.com/tkdhanasekar/prometheus-grafana/blob/main/18.All_Linux_HDD.json
+```
