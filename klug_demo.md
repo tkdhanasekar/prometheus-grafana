@@ -210,3 +210,47 @@ http://server_IP:9100/metrics
 
 :blue_square: __Node Exporter Installation in Client Machines__
 install node_exporter in all client machines
+
+:blue_square: __Alert Manager Installation in Prometheus Server__
+
+update the server
+```
+apt update -y
+```
+Download the alertmanager
+```
+wget https://github.com/prometheus/alertmanager/releases/download/v0.23.0/alertmanager-0.23.0.linux-amd64.tar.gz
+tar -xvf alertmanager-0.23.0.linux-amd64.tar.gz
+cd alertmanager-0.23.0.linux-amd64/
+cp -r . /usr/local/bin/alertmanager
+```
+create the alertmanager service file
+```
+vim /etc/systemd/system/alertmanager.service
+[Unit]
+Description=Prometheus Alert Manager Service
+After=network.target
+
+[Service]
+Type=simple
+ExecStart=/usr/local/bin/alertmanager/alertmanager \
+    --config.file=/usr/local/bin/alertmanager/alertmanager.yml \
+    --cluster.advertise-address="xx.xx.xx.xx:9093"
+
+[Install]
+WantedBy=multi-user.target
+```
+check the alertmanager config with amtool
+```
+/usr/local/bin/alertmanager/amtool check-config /usr/local/bin/alertmanager/alertmanager.yml
+```
+reload the daemon , start , enable and check the status of alertmanager server
+```
+systemctl daemon-reload
+systemctl start alertmanager.service
+systemctl enable alertmanager.service
+systemctl status alertmanager.service
+```
+
+in browser \
+http://server_ip:9093
