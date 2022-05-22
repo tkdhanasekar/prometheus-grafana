@@ -362,3 +362,12 @@ https://github.com/tkdhanasekar/prometheus-grafana/blob/main/16.All_Linx_CPU.jso
 https://github.com/tkdhanasekar/prometheus-grafana/blob/main/17.All_Linux_RAM.json
 https://github.com/tkdhanasekar/prometheus-grafana/blob/main/18.All_Linux_HDD.json
 ```
+:blue_square: __amtool and promtool__
+To check the validation of alertmanager.yml
+```
+/usr/local/bin/alertmanager/amtool check-config /usr/local/bin/alertmanager/alertmanager.yml
+```
+To check for alert rules validation
+```
+promtool check rules /etc/prometheus/rules/alert-rules.yml
+```
