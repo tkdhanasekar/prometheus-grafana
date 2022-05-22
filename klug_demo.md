@@ -73,17 +73,17 @@ scrape_configs:
   - job_name: 'prometheus_server'
     scrape_interval: 5s
     static_configs:
-      - targets: ['xx.xx.xx.xx:9100']
+      - targets: ['172.104.47.222:9100']
 
   - job_name: 'client_1'
     scrape_interval: 5s
     static_configs:
-      - targets: ['xx.xx.xx.xx:9100']
+      - targets: ['139.162.56.155:9100']
       
   - job_name: 'client_2'
     scrape_interval: 5s
     static_configs:
-      - targets: ['xx.xx.xx.xx:9100']
+      - targets: ['172.105.123.69:9100']
 ```
 Change the ownership of the file to prometheus user
 ```
@@ -240,7 +240,7 @@ After=network.target
 Type=simple
 ExecStart=/usr/local/bin/alertmanager/alertmanager \
     --config.file=/usr/local/bin/alertmanager/alertmanager.yml \
-    --cluster.advertise-address="xx.xx.xx.xx:9093"
+    --cluster.advertise-address="172.104.47.222:9093"
 
 [Install]
 WantedBy=multi-user.target
