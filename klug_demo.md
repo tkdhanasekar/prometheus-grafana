@@ -254,3 +254,82 @@ systemctl status alertmanager.service
 
 in browser \
 http://server_ip:9093
+
+:blue_square: __SMTP Config for Alert Manager__
+```
+vim /usr/local/bin/alertmanager/alertmanager.yml
+global:
+  resolve_timeout: 5m
+
+route:
+  group_by: ['alertname']
+  group_wait: 10s
+  group_interval: 10s
+  repeat_interval: 24h
+  receiver: 'email'
+receivers:
+- name: 'email'
+  email_configs:
+  - to: tkdhanasekar@gmail.com,tkdana@gmail.com
+    from: 'ktdhanasekar@gmail.com'
+    smarthost: smtp.gmail.com:587
+    auth_username: 'ktdhanasekar@gmail.com'
+    auth_identity: 'ktdhanasekar@gmail.com'
+    auth_password: '***********'
+    send_resolved: true
+inhibit_rules:
+  - source_match:
+      severity: 'critical'
+    target_match:
+      severity: 'warning'
+    equal: ['alertname', 'dev', 'instance']
+```
+
+:blue_square: __Alert Manager Rules config__
+
+```
+mkdir /etc/prometheus/rules
+```
+```
+vim /etc/prometheus/rules/alert-rules.yml
+
+groups:
+- name: alert-rules
+  rules:
+  - alert: ExporterDown
+    expr: up == 0
+    for: 5m
+    labels:
+      severity: critical
+    annotations:
+      description: 'Metrics exporter service for {{ $labels.job }} running on {{ $labels.instance }} has been down for more than 5 minutes.'
+      summary: 'Exporter down (instance {{ $labels.instance }})'
+
+  - alert: HostOutOfDiskSpace
+    expr: (node_filesystem_avail_bytes * 100) / node_filesystem_size_bytes < 15 and ON (instance, device, mountpoint) node_filesystem_readonly == 0
+    for: 2m
+    labels:
+      severity: warning
+    annotations:
+      summary: Host out of disk space (instance {{ $labels.instance }})
+      description: "Disk is almost full (< 15% left)\n  VALUE = {{ $value }}\n  LABELS = {{ $labels }}"
+
+  - alert: HostOutOfMemory
+    expr: node_memory_MemAvailable_bytes / node_memory_MemTotal_bytes * 100 < 15
+    for: 2m
+    labels:
+      severity: warning
+    annotations:
+      summary: Host out of memory (instance {{ $labels.instance }})
+      description: "Node memory is filling up (< 15% left)\n  VALUE = {{ $value }}\n  LABELS = {{ $labels }}"
+
+  - alert: HostHighCpuLoad
+    expr: 100 - (avg by(instance) (rate(node_cpu_seconds_total{mode="idle"}[2m])) * 100) > 85
+    for: 0m
+    labels:
+      severity: warning
+    annotations:
+      summary: Host high CPU load (instance {{ $labels.instance }})
+      description: "CPU load is > 85%\n  VALUE = {{ $value }}\n  LABELS = {{ $labels }}"
+```
+
