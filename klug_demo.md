@@ -213,7 +213,7 @@ install node_exporter in all client machines
 
 :blue_square: __Add Data sources__
 add data sources \
-add node exporter full 1860 if for dashboard
+add node exporter full 1860 id for dashboard
 
 
 :blue_square: __Alert Manager Installation in Prometheus Server__
