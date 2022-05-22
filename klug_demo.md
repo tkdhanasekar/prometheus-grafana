@@ -255,6 +255,23 @@ systemctl status alertmanager.service
 in browser \
 http://server_ip:9093
 
+:blue_square: __alert rules location__
+Add the alert manager rules location in prometheus.yml file 
+```
+Add alertmanager parameters in /etc/prometheus/prometheus.yml:
+
+# Alertmanager configuration
+alerting:
+  alertmanagers:
+  - static_configs:
+    - targets:
+       - localhost:9093
+
+# Load rules once and periodically evaluate them according to the global 'evaluation_interval'.
+rule_files:
+  - "/etc/prometheus/rules/*.yml"
+```
+
 :blue_square: __SMTP Config for Alert Manager__
 ```
 vim /usr/local/bin/alertmanager/alertmanager.yml
