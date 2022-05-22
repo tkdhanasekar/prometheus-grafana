@@ -6,4 +6,4 @@
 :red_square: __SMTP config for Alerts__
 :red_square: __Alert Manager rules__
 
-:red_suare: __Node Exporter Installation in client Machines__
+:red_square: __Node Exporter Installation in client Machines__
