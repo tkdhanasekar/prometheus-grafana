@@ -260,11 +260,12 @@ systemctl status alertmanager.service
 in browser \
 http://server_ip:9093
 
-:blue_square: __alert rules location__
-Add the alert manager rules location in prometheus.yml file 
-```
-Add alertmanager parameters in /etc/prometheus/prometheus.yml:
+:blue_square: __Add alert rules location__
 
+Add alertmanager parameters in /etc/prometheus/prometheus.yml:
+```
+global:
+  scrape_interval: 10s
 # Alertmanager configuration
 alerting:
   alertmanagers:
