@@ -120,3 +120,44 @@ systemctl status prometheus
 ```
 access the prometheus UI on 9090 port \
 http://xx.xx.xx.xx:9090/graph
+
+:blue_square: __Grafana Installation__
+update the server
+```
+apt update -y
+```
+download the package
+```
+wget -q -O - https://packages.grafana.com/gpg.key | sudo apt-key add -
+```
+install Grafana APT repository
+```
+add-apt-repository "deb https://packages.grafana.com/oss/deb stable main"
+```
+update the server
+```
+apt update -y
+```
+install the grafana package
+```
+apt-get -y install grafana
+```
+start the grafana server
+```
+systemctl start grafana-server.service
+```
+enable the grafana server
+```
+systemctl enable grafana-server.service
+```
+check the status of grafana server
+```
+systemctl status grafana-server.service
+```
+check the version of grafana server
+```
+grafana-server -v
+```
+to login to grafana dashboard \
+http://ip_of_server:3000/login
+
