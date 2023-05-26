@@ -6,9 +6,9 @@ update the server
 ```
 Download the alertmanager
 ```
-# wget https://github.com/prometheus/alertmanager/releases/download/v0.23.0/alertmanager-0.23.0.linux-amd64.tar.gz
-# tar -xvf alertmanager-0.23.0.linux-amd64.tar.gz
-# cd alertmanager-0.23.0.linux-amd64/
+# wget https://github.com/prometheus/alertmanager/releases/download/v0.25.0/alertmanager-0.25.0.linux-amd64.tar.gz
+# tar -xvf alertmanager-0.25.0.linux-amd64.tar.gz
+# cd alertmanager-0.25.0.linux-amd64/
 # cp -r . /usr/local/bin/alertmanager
 ```
 create the alertmanager service file
