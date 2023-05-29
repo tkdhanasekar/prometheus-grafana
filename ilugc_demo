@@ -290,11 +290,11 @@ Apache_node exporter:
 # useradd -s /bin/false -r -g apache_exporter apache_exporter
 # mkdir /downloads/apache_exporter -p
 # cd /downloads/apache_exporter
-# wget https://github.com/Lusitaniae/apache_exporter/releases/download/v0.5.0/apache_exporter-0.5.0.linux-amd64.tar.gz
-# tar -zxvf apache_exporter-0.5.0.linux-amd64.tar.gz
-# cd apache_exporter-0.5.0.linux-amd64/
+# wget https://github.com/Lusitaniae/apache_exporter/releases/download/v0.13.3/apache_exporter-0.13.3.linux-amd64.tar.gz
+# tar -zxvf apache_exporter-0.13.3.linux-amd64.tar.gz
+# cd apache_exporter-0.13.3.linux-amd64/
 # apache_exporter --version
-# cp apache_exporter-0.5.0.linux-amd64/apache_exporter /usr/local/bin
+# cp apache_exporter-0.13.3.linux-amd64/apache_exporter /usr/local/bin
 # chmod +x /usr/local/bin/apache_exporter
 
 # vim /etc/systemd/system/apache_exporter.service
