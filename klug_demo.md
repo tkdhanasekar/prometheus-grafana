@@ -264,8 +264,7 @@ http://server_ip:9093
 
 Add alertmanager parameters in /etc/prometheus/prometheus.yml:
 ```
-global:
-  scrape_interval: 10s
+
 # Alertmanager configuration
 alerting:
   alertmanagers:
