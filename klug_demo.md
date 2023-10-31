@@ -264,6 +264,10 @@ http://server_ip:9093
 
 Add alertmanager parameters in /etc/prometheus/prometheus.yml:
 ```
+<<<<<<< HEAD
+=======
+
+>>>>>>> 6fc420e14623a6b4d29e69f3e085ab93644d5802
 # Alertmanager configuration
 alerting:
   alertmanagers:
