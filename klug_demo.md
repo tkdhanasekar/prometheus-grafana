@@ -17,14 +17,14 @@ apt update -y && apt upgrade -y
 
 Download the latest prometheus
 ```
-wget https://github.com/prometheus/prometheus/releases/download/v2.25.2/prometheus-2.25.2.linux-amd64.tar.gz
+wget https://github.com/prometheus/prometheus/releases/download/v2.47.2/prometheus-2.47.2.linux-amd64.tar.gz
 ```
 ```
-tar -xvf prometheus-2.25.2.linux-amd64.tar.gz
+tar -xvf prometheus-2.47.2.linux-amd64.tar.gz
 ```
 rename the prometheus-2.25.2.linux-amd64 to prometheus-files
 ```
-mv prometheus-2.25.2.linux-amd64 prometheus-files
+mv prometheus-2.47.2.linux-amd64 prometheus-files
 ```
 Add a Prometheus user
 ```
@@ -166,14 +166,14 @@ http://ip_of_server:3000/login
 :blue_square: __Node Exporter Installation__
 download the source
 ```
-wget https://github.com/prometheus/node_exporter/releases/download/v1.1.2/node_exporter-1.1.2.linux-amd64.tar.gz
+wget https://github.com/prometheus/node_exporter/releases/download/v1.6.1/node_exporter-1.6.1.linux-amd64.tar.gz
 ```
 ```
-tar -xvf node_exporter-1.1.2.linux-amd64.tar.gz
+tar -xvf node_exporter-1.6.1.linux-amd64.tar.gz
 ```
 move the folder to the specified location
 ```
-mv node_exporter-1.1.2.linux-amd64/node_exporter /usr/local/bin/
+mv node_exporter-1.6.1.linux-amd64/node_exporter /usr/local/bin/
 ```
 add the user
 ```
@@ -224,9 +224,9 @@ apt update -y
 ```
 Download the alertmanager
 ```
-wget https://github.com/prometheus/alertmanager/releases/download/v0.23.0/alertmanager-0.23.0.linux-amd64.tar.gz
-tar -xvf alertmanager-0.23.0.linux-amd64.tar.gz
-cd alertmanager-0.23.0.linux-amd64/
+wget https://github.com/prometheus/alertmanager/releases/download/v0.26.0/alertmanager-0.26.0.linux-amd64.tar.gz
+tar -xvf alertmanager-0.26.0.linux-amd64.tar.gz
+cd alertmanager-0.26.0.linux-amd64/
 cp -r . /usr/local/bin/alertmanager
 ```
 create the alertmanager service file
@@ -264,8 +264,6 @@ http://server_ip:9093
 
 Add alertmanager parameters in /etc/prometheus/prometheus.yml:
 ```
-global:
-  scrape_interval: 10s
 # Alertmanager configuration
 alerting:
   alertmanagers:
