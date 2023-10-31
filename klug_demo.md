@@ -240,7 +240,7 @@ After=network.target
 Type=simple
 ExecStart=/usr/local/bin/alertmanager/alertmanager \
     --config.file=/usr/local/bin/alertmanager/alertmanager.yml \
-    --cluster.advertise-address="172.104.47.222:9093"
+    --cluster.advertise-address="server_ip:9093"
 
 [Install]
 WantedBy=multi-user.target
@@ -264,10 +264,6 @@ http://server_ip:9093
 
 Add alertmanager parameters in /etc/prometheus/prometheus.yml:
 ```
-<<<<<<< HEAD
-=======
-
->>>>>>> 6fc420e14623a6b4d29e69f3e085ab93644d5802
 # Alertmanager configuration
 alerting:
   alertmanagers:
