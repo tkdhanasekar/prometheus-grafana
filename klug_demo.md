@@ -369,3 +369,17 @@ To check for alert rules validation
 ```
 promtool check rules /etc/prometheus/rules/alert-rules.yml
 ```
+finally restart and check the status of the services
+```
+systemctl restart prometheus
+systemctl restart node_exporter
+systemctl restart alertmanager
+systemctl restart grafana-server
+```
+```
+systemctl status prometheus
+systemctl status node_exporter
+systemctl status alertmanager
+systemctl status grafana-server
+```
+
