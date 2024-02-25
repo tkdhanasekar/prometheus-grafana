@@ -240,7 +240,7 @@ After=network.target
 Type=simple
 ExecStart=/usr/local/bin/alertmanager/alertmanager \
     --config.file=/usr/local/bin/alertmanager/alertmanager.yml \
-    --cluster.advertise-address="server_ip:9093"
+    --cluster.advertise-address="server_ip:9093"   ###to give promotheus ip addres
 
 [Install]
 WantedBy=multi-user.target
@@ -297,7 +297,7 @@ receivers:
     auth_username: 'ktdhanasekar@gmail.com'
     auth_identity: 'ktdhanasekar@gmail.com'
     auth_password: '***********'
-    send_resolved: true
+    send_resolved: true       ### it is import to give
 inhibit_rules:
   - source_match:
       severity: 'critical'
