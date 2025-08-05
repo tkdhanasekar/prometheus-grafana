@@ -2,13 +2,10 @@
 # apt install apache2 -y
 # groupadd --system apache_exporter
 # useradd -s /bin/false -r -g apache_exporter apache_exporter
-# mkdir /downloads/apache_exporter -p
-# cd /downloads/apache_exporter
-# wget https://github.com/Lusitaniae/apache_exporter/releases/download/v0.5.0/apache_exporter-0.5.0.linux-amd64.tar.gz
-# tar -zxvf apache_exporter-0.5.0.linux-amd64.tar.gz
-# cd apache_exporter-0.5.0.linux-amd64/
-# apache_exporter --version
-# cp apache_exporter-0.5.0.linux-amd64/apache_exporter /usr/local/bin
+# wget https://github.com/Lusitaniae/apache_exporter/releases/download/v1.0.10/apache_exporter-1.0.10.linux-amd64.tar.gz
+# tar -zvxf apache_exporter-1.0.10.linux-amd64.tar.gz
+# cd apache_exporter-1.0.10.linux-amd64/
+# cp apache_exporter-1.0.10.linux-amd64/apache_exporter /usr/local/bin
 # chmod +x /usr/local/bin/apache_exporter
 
 # vim /etc/systemd/system/apache_exporter.service
@@ -37,7 +34,7 @@ WantedBy=multi-user.target
 - job_name: 'apache1'
     scrape_interval: 5s
     static_configs:
-      - targets: ['139.177.187.86:9117']
+      - targets: ['apache_server_ip:9117']
       
 # vim /etc/prometheus/rules/alert-rules.yml
 - alert: ApacheDown
