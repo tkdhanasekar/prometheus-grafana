@@ -28,7 +28,7 @@ ExecStart=/usr/local/bin/alertmanager/alertmanager \
 WantedBy=multi-user.target
 
 :wq! 
-save and exit
+save and exit , where xx.xx.xx.xx is prometheus alert manager server ip
 ```
 
 check the alertmanager config with amtool
@@ -43,5 +43,5 @@ reload the daemon , start , enable and check the status of alertmanager server
 # systemctl status alertmanager.service
 ```
 in browser
-http://server_ip:9093
+http://server_ip:9093 \
 http://server_ip:9090/alerts
