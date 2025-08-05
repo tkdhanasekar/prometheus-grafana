@@ -44,3 +44,4 @@ reload the daemon , start , enable and check the status of alertmanager server
 ```
 in browser
 http://server_ip:9093
+http://server_ip:9090/alerts
