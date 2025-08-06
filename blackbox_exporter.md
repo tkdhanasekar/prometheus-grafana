@@ -36,7 +36,7 @@ After=network-online.target
 User=root
 Restart=on-failure
 
-ExecStart=/root/blackbox_exporter-0.24.0.linux-amd64/blackbox_exporter --config.file=/root/blackbox_exporter-0.24.0.linux-amd64/monitor_website.yml
+ExecStart=/root/blackbox_exporter-0.27.0.linux-amd64/blackbox_exporter --config.file=/root/blackbox_exporter-0.27.0.linux-amd64/monitor_website.yml
 
 [Install]
 WantedBy=multi-user.target
