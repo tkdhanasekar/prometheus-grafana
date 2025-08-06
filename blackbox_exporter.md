@@ -1,14 +1,14 @@
 download the blackbox exporter
 ```
-wget https://github.com/prometheus/blackbox_exporter/releases/download/v0.24.0/blackbox_exporter-0.24.0.linux-amd64.tar.gz
+wget https://github.com/prometheus/blackbox_exporter/releases/download/v0.27.0/blackbox_exporter-0.27.0.linux-amd64.tar.gz
 ```
 extract
 ```
-tar -xvf blackbox_exporter-0.24.0.linux-amd64.tar.gz
+tar -xvf blackbox_exporter-0.27.0.linux-amd64.tar.gz
 ```
 go to blackbox directory
 ```
-cd blackbox_exporter-0.24.0.linux-amd64
+cd blackbox_exporter-0.27.0.linux-amd64
 ```
 create the file
 ```
