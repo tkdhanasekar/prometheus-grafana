@@ -83,25 +83,40 @@ systemctl restart grafana-server
 To view the blackbox metrics
 http://server_ip:9115/
 
-In grafana dashboard
-create new dashboard
-
-execute the querires for job
+To check website is working or not working
+- In grafana dashboard
+- create new dashboard > add new panel
 ```
 probe_http_status_code
 ```
-```
-probe_http_ssl
-```
-In visualizations > select > Tables
-and then to value mappings and colour setting
-and then set panel title
+- execute the query in promQL
+- change the visualization to table in top right of the grafana dashboard,
+- set panel title,
+- set value mapping 
+  - value 200 display text OK set color
+  - vaule range 0-199 text NOT_OK set color
+  - vaule range 201-600 text NOT_OK set color,
+- then set cell display mode to color text,
+- then in promQL Format change timeseries to table and set Type to instant,
+- and then from transform filter by name , disable time, name, job
+- apply and save
 
-In bottom options
-select format > Table 
-select Type > instant
+To check for SSL site
+- execute the query in promQL
+```
+sum by(instance) (probe_http_ssl)
+```
+- change the visualization to table in top right of the grafana dashboard,
+- set panel title,
+- set value mapping 
+  - value 1 display text SSL set color
+  - value 0 display text NO_SSL set color
+- then set cell display mode to color text,
+- then in promQL Format change timeseries to table and set Type to instant,
+- and then from transform filter by name , disable time name job
+- apply and save
 
-Select Transform data > select by name and give choice 
+
 
 
 
