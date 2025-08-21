@@ -154,7 +154,7 @@ Alert rule for SSL certificates that are about to expire within days
       severity: critical
     annotations:
       summary: Blackbox SSL certificate will expire soon (instance {\{ $labels.instance }})
-      description: "SSL certificate expires in 3 days\n  VALUE = {\{ $value }}\n  LABELS = {\{ $labels }}"
+      description: "SSL certificate expires in 3 days\n  VALUE = {{ $value }}\n  LABELS = {{ $labels }}"
 ```
 
 
