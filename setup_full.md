@@ -93,6 +93,8 @@ Setup Prometheus Service File
 Create a prometheus service file.
 ```
 vim /etc/systemd/system/prometheus.service
+```
+```
 [Unit]
 Description=Prometheus
 Wants=network-online.target
@@ -132,9 +134,6 @@ download the grafana package
 ```
 wget https://dl.grafana.com/oss/release/grafana_12.1.0_amd64.deb
 ```
-```
-ls
-```
 install the package
 ```
 sudo dpkg -i grafana_12.1.0_amd64.deb
@@ -148,6 +147,7 @@ http://grafana_server_ip:3000/login
 
 
 :blue_square: <ins>**Step 3: Node-exporter Installation**</ins>
+
 download the source
 ```
 wget https://github.com/prometheus/node_exporter/releases/download/v1.9.1/node_exporter-1.9.1.linux-amd64.tar.gz
@@ -185,8 +185,6 @@ systemctl daemon-reload && systemctl start node_exporter && systemctl enable nod
 ```
 in the browser \
 http://server_IP:9100/metrics
-
-
 
 :blue_square: <ins>**Step 4: Node-exporter Installation**</ins>
 install node_exporter in all client machines
@@ -246,6 +244,7 @@ http://server_ip:9093
 
 
 :blue_square: <ins>**Step 6: Notification Config for Alertmanager**</ins>
+
 __for Email Notification__
 ```
 vim /usr/local/bin/alertmanager/alertmanager.yml
@@ -306,7 +305,8 @@ mkdir /etc/prometheus/rules
 ```
 ```
 vim /etc/prometheus/rules/alert-rules.yml
-
+```
+```
 groups:
 - name: alert-rules
   rules:
