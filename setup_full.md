@@ -52,6 +52,8 @@ Setup Prometheus Configuration
 Create the prometheus.yml file.
 ```
 vim /etc/prometheus/prometheus.yml
+```
+```
 global:
   scrape_interval: 10s
 
