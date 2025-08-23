@@ -17,14 +17,14 @@ apt update -y && apt upgrade -y
 
 Download the latest prometheus
 ```
-wget https://github.com/prometheus/prometheus/releases/download/v2.47.2/prometheus-2.47.2.linux-amd64.tar.gz
+wget https://github.com/prometheus/prometheus/releases/download/v3.5.0/prometheus-3.5.0.linux-amd64.tar.gz
 ```
 ```
-tar -xvf prometheus-2.47.2.linux-amd64.tar.gz
+tar -xvf prometheus-3.5.0.linux-amd64.tar.gz
 ```
-rename the prometheus-2.25.2.linux-amd64 to prometheus-files
+rename the prometheus-3.5.0.linux-amd64 to prometheus-files
 ```
-mv prometheus-2.47.2.linux-amd64 prometheus-files
+mv prometheus-3.5.0.linux-amd64 prometheus-files
 ```
 Add a Prometheus user
 ```
@@ -34,7 +34,6 @@ create necessary directories
 ```
 mkdir /etc/prometheus
 mkdir /var/lib/prometheus
-groupadd prometheus
 ```
 Change the owner of the above directories
 ```
@@ -49,13 +48,6 @@ cp prometheus-files/prometheus /usr/local/bin/
 cp prometheus-files/promtool /usr/local/bin/
 chown prometheus:prometheus /usr/local/bin/prometheus
 chown prometheus:prometheus /usr/local/bin/promtool
-```
-Move the consoles and console_libraries directories from prometheus-files to /etc/prometheus folder and change the ownership to prometheus user
-```
-cp -r prometheus-files/consoles /etc/prometheus
-cp -r prometheus-files/console_libraries /etc/prometheus
-chown -R prometheus:prometheus /etc/prometheus/consoles
-chown -R prometheus:prometheus /etc/prometheus/console_libraries
 ```
 Setup Prometheus Configuration
 Create the prometheus.yml file.
@@ -73,17 +65,12 @@ scrape_configs:
   - job_name: 'prometheus_server'
     scrape_interval: 5s
     static_configs:
-      - targets: ['xx.xx.xx.xx:9100']
+      - targets: ['prometheus_server_ip:9100']
 
-  - job_name: 'client_1'
+  - job_name: 'node-1'
     scrape_interval: 5s
     static_configs:
-      - targets: ['xx.xx.xx.xx:9100']
-      
-  - job_name: 'client_2'
-    scrape_interval: 5s
-    static_configs:
-      - targets: ['xx.xx.xx.xx:9100']
+      - targets: ['node-1_server_ip:9100']
 ```
 Change the ownership of the file to prometheus user
 ```
@@ -114,79 +101,60 @@ ExecStart=/usr/local/bin/prometheus \
 WantedBy=multi-user.target
 ```
 ```
-systemctl daemon-reload
-systemctl start prometheus
-systemctl enable prometheus
-systemctl status prometheus
+systemctl daemon-reload && systemctl start prometheus && systemctl enable prometheus && systemctl status prometheus --no-pager
 ```
 access the prometheus UI on 9090 port \
-http://xx.xx.xx.xx:9090/graph
+http://prometheus_server_ip:9090/graph
 
 :blue_square: __Grafana Installation__
 update the server
 ```
 apt update -y
 ```
-download the grafana GPG key
+install dependencies
 ```
-wget -q -O - https://packages.grafana.com/gpg.key | gpg --dearmor | sudo tee /usr/share/keyrings/grafana.gpg > /dev/null
+sudo apt install -y adduser libfontconfig1 musl
 ```
-install Grafana APT repository
+download the grafana package
 ```
-echo "deb [signed-by=/usr/share/keyrings/grafana.gpg] https://packages.grafana.com/oss/deb stable main" | sudo tee -a /etc/apt/sources.list.d/grafana.list
+wget https://dl.grafana.com/oss/release/grafana_12.1.0_amd64.deb
 ```
-update the server
 ```
-apt update
+ls
 ```
-install the grafana package
+install the package
 ```
-apt install grafana -y
+sudo dpkg -i grafana_12.1.0_amd64.deb
 ```
-start the grafana server
+reload the daemon, enable, start and check status
 ```
-systemctl start grafana-server.service
-```
-enable the grafana server
-```
-systemctl enable grafana-server.service
-```
-check the status of grafana server
-```
-systemctl status grafana-server.service
-```
-check the version of grafana server
-```
-grafana-server -v
+sudo /bin/systemctl daemon-reload && sudo /bin/systemctl enable grafana-server && sudo /bin/systemctl start grafana-server && sudo /bin/systemctl status grafana-server
 ```
 to login to grafana dashboard \
-http://ip_of_server:3000/login
+http://grafana_server_ip:3000/login
 
 
 :blue_square: __Node Exporter Installation__
 download the source
 ```
-wget https://github.com/prometheus/node_exporter/releases/download/v1.6.1/node_exporter-1.6.1.linux-amd64.tar.gz
+wget https://github.com/prometheus/node_exporter/releases/download/v1.9.1/node_exporter-1.9.1.linux-amd64.tar.gz
 ```
 ```
-tar -xvf node_exporter-1.6.1.linux-amd64.tar.gz
+tar -xvf node_exporter-1.9.1.linux-amd64.tar.gz
 ```
 move the folder to the specified location
 ```
-mv node_exporter-1.6.1.linux-amd64/node_exporter /usr/local/bin/
+mv node_exporter-1.9.1.linux-amd64/node_exporter /usr/local/bin/
 ```
 add the user
 ```
 useradd -rs /bin/false node_exporter
 ```
-create the group
-```
-groupadd node_exporter
-```
 create the node_exporter service file
 ```
 vim /etc/systemd/system/node_exporter.service
-
+```
+```
 [Unit]
 Description=Node Exporter
 After=network.target
@@ -200,13 +168,12 @@ WantedBy=multi-user.target
 ```
 reload the daemon , start , enable and check the status of node_exporter
 ```
-systemctl daemon-reload
-systemctl start node_exporter
-systemctl enable node_exporter
-systemctl status node_exporter
+systemctl daemon-reload && systemctl start node_exporter && systemctl enable node_exporter && systemctl status node_exporter --no-pager
 ```
 in the browser \
 http://server_IP:9100/metrics
+
+
 
 :blue_square: __Node Exporter Installation in Client Machines__
 install node_exporter in all client machines
@@ -216,7 +183,7 @@ add data sources \
 add node exporter full 1860 id for dashboard
 
 
-:blue_square: __Alert Manager Installation in Prometheus Server__
+:blue_square: __Prometheus Alert Manager Installation in Prometheus Server__
 
 update the server
 ```
@@ -224,14 +191,22 @@ apt update -y
 ```
 Download the alertmanager
 ```
-wget https://github.com/prometheus/alertmanager/releases/download/v0.26.0/alertmanager-0.26.0.linux-amd64.tar.gz
-tar -xvf alertmanager-0.26.0.linux-amd64.tar.gz
-cd alertmanager-0.26.0.linux-amd64/
+wget https://github.com/prometheus/alertmanager/releases/download/v0.28.1/alertmanager-0.28.1.linux-amd64.tar.gz
+```
+```
+tar -xvf alertmanager-0.28.1.linux-amd64.tar.gz
+```
+```
+cd alertmanager-0.28.1.linux-amd64/
+```
+```
 cp -r . /usr/local/bin/alertmanager
 ```
 create the alertmanager service file
 ```
 vim /etc/systemd/system/alertmanager.service
+```
+```
 [Unit]
 Description=Prometheus Alert Manager Service
 After=network.target
@@ -251,12 +226,8 @@ check the alertmanager config with amtool
 ```
 reload the daemon , start , enable and check the status of alertmanager server
 ```
-systemctl daemon-reload
-systemctl start alertmanager.service
-systemctl enable alertmanager.service
-systemctl status alertmanager.service
+systemctl daemon-reload && systemctl start alertmanager.service && systemctl enable alertmanager.service && systemctl status alertmanager.service --no-pager
 ```
-
 in browser \
 http://server_ip:9093
 
@@ -371,15 +342,9 @@ promtool check rules /etc/prometheus/rules/alert-rules.yml
 ```
 finally restart and check the status of the services
 ```
-systemctl restart prometheus
-systemctl restart node_exporter
-systemctl restart alertmanager
-systemctl restart grafana-server
+systemctl restart prometheus && systemctl restart node_exporter && systemctl restart alertmanager && systemctl restart grafana-server
 ```
 ```
-systemctl status prometheus
-systemctl status node_exporter
-systemctl status alertmanager
-systemctl status grafana-server
+systemctl status prometheus --no-pager && systemctl status node_exporter --no-pager && systemctl status alertmanager --no-pager && systemctl status grafana-server --no-pager
 ```
 
