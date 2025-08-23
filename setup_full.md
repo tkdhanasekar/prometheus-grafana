@@ -11,7 +11,7 @@
 
 :blue_square: <ins>**Step 1: Prometheus Installation**</ins>
 ```
-apt update -y && apt upgrade -y
+apt update
 ```
 
 Download the latest prometheus
