@@ -9,7 +9,7 @@
 
 
 
-:blue_square: <u>**This text is bold and underlined.**</u>
+:blue_square: <ins>**This text is bold and underlined.**</ins>
 ```
 apt update -y && apt upgrade -y
 ```
