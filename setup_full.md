@@ -9,7 +9,7 @@
 
 
 
-:blue_square: <ins>**This text is bold and underlined.**</ins>
+:blue_square: <ins>**Step 1: Prometheus Installation**</ins>
 ```
 apt update -y && apt upgrade -y
 ```
@@ -117,7 +117,7 @@ systemctl daemon-reload && systemctl start prometheus && systemctl enable promet
 access the prometheus UI on 9090 port \
 http://prometheus_server_ip:9090/graph
 
-:blue_square: __Grafana Installation__
+:blue_square: <ins>**Step 2: Grafana Installation**</ins>
 update the server
 ```
 apt update -y
@@ -145,7 +145,7 @@ to login to grafana dashboard \
 http://grafana_server_ip:3000/login
 
 
-:blue_square: __Node Exporter Installation__
+:blue_square: <ins>**Step 3: Node-exporter Installation**</ins>
 download the source
 ```
 wget https://github.com/prometheus/node_exporter/releases/download/v1.9.1/node_exporter-1.9.1.linux-amd64.tar.gz
@@ -186,7 +186,7 @@ http://server_IP:9100/metrics
 
 
 
-:blue_square: __Node Exporter Installation in Client Machines__
+:blue_square: <ins>**Step 4: Node-exporter Installation**</ins>
 install node_exporter in all client machines
 
 :blue_square: __Add Data sources__
@@ -194,7 +194,7 @@ add data sources \
 add node exporter full 1860 id for dashboard
 
 
-:blue_square: __Prometheus Alert Manager Installation in Prometheus Server__
+:blue_square: <ins>**Step 5: Prometheus Alertmanager Installation**</ins>
 
 update the server
 ```
@@ -243,7 +243,7 @@ in browser \
 http://server_ip:9093
 
 
-:blue_square: __Notification Config for Alert Manager__
+:blue_square: <ins>**Step 6: Notification Config for Alertmanager**</ins>
 __for Email Notification__
 ```
 vim /usr/local/bin/alertmanager/alertmanager.yml
@@ -297,7 +297,7 @@ receivers:
         send_resolved: true 
 ```
 
-:blue_square: __Alert Manager Rules config__
+:blue_square: <ins>**Step 7: create alertmanager rules**</ins>
 
 ```
 mkdir /etc/prometheus/rules
