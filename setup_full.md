@@ -56,6 +56,18 @@ vim /etc/prometheus/prometheus.yml
 global:
   scrape_interval: 10s
 
+# Alertmanager configuration
+alerting:
+  alertmanagers:
+  - static_configs:
+    - targets:
+       - localhost:9093
+
+# Load rules once and periodically evaluate them according to the global 'evaluation_interval'.
+rule_files:
+  - "/etc/prometheus/rules/*.yml"
+
+
 scrape_configs:
   - job_name: 'prometheus'
     scrape_interval: 5s
@@ -231,25 +243,13 @@ systemctl daemon-reload && systemctl start alertmanager.service && systemctl ena
 in browser \
 http://server_ip:9093
 
-:blue_square: __Add alert rules location__
 
-Add alertmanager parameters in /etc/prometheus/prometheus.yml:
-```
-# Alertmanager configuration
-alerting:
-  alertmanagers:
-  - static_configs:
-    - targets:
-       - localhost:9093
-
-# Load rules once and periodically evaluate them according to the global 'evaluation_interval'.
-rule_files:
-  - "/etc/prometheus/rules/*.yml"
-```
-
-:blue_square: __SMTP Config for Alert Manager__
+:blue_square: __Notification Config for Alert Manager__
+__for Email Notification__
 ```
 vim /usr/local/bin/alertmanager/alertmanager.yml
+```
+```
 global:
   resolve_timeout: 5m
 
@@ -275,6 +275,27 @@ inhibit_rules:
     target_match:
       severity: 'warning'
     equal: ['alertname', 'dev', 'instance']
+```
+__for Mattermost Notification__
+```
+vim /usr/local/bin/alertmanager/alertmanager.yml
+```
+```
+global:
+  resolve_timeout: 5m
+route:
+  group_by: ['alertname']
+  group_wait: 10s
+  group_interval: 10s
+  repeat_interval: 24h
+  receiver: 'mattermost'
+route:
+  receiver: 'mattermost'
+receivers:
+  - name: 'mattermost'
+    slack_configs:/webhook_configs:
+      - api_url: 'https://convo.darthcentral.in/hooks/rtusjdiamjb4pgi3jwhii58gbr'
+        send_resolved: true 
 ```
 
 :blue_square: __Alert Manager Rules config__
@@ -323,14 +344,41 @@ groups:
     annotations:
       summary: Host high CPU load (instance {{ $labels.instance }})
       description: "CPU load is > 85%\n  VALUE = {{ $value }}\n  LABELS = {{ $labels }}"
+      
+  - alert: SITE_DOWN
+    expr: probe_http_status_code != 200
+    for: 1m
+    labels:
+      severity: critical
+    annotations:
+      summary: "HTTP status code is not 200 for {{ $labels.instance }}"
+      description: "Target {{ $labels.instance }} returned HTTP status code {{ $value }}. Expected 200."
+      
+  - alert: BlackboxSslCertificateWillExpireSoon
+    expr: probe_ssl_earliest_cert_expiry - time() < 86400 * 3
+    for: 0m
+    labels:
+      severity: critical
+    annotations:
+      summary: Blackbox SSL certificate will expire soon (instance {\{ $labels.instance }})
+      description: "SSL certificate expires in 3 days\n  VALUE = {{ $value }}\n  LABELS = {{ $labels }}"
 ```
 
-:blue_square: __customised dashboard__
+:blue_square: __Prometheus Queries for customised dashboard__
+
+ALL RAM
 ```
-https://github.com/tkdhanasekar/prometheus-grafana/blob/main/16.All_Linx_CPU.json
-https://github.com/tkdhanasekar/prometheus-grafana/blob/main/17.All_Linux_RAM.json
-https://github.com/tkdhanasekar/prometheus-grafana/blob/main/18.All_Linux_HDD.json
+(1 - (node_memory_MemAvailable_bytes / node_memory_MemTotal_bytes)) * 100
 ```
+ALL CPU
+```
+100 * (1 - avg by(job) (rate(node_cpu_seconds_total{mode="idle"}[5m])))
+```
+ALL HDD
+```
+100 - ((node_filesystem_avail_bytes {mountpoint="/",fstype!="rootfs"} * 100) / node_filesystem_size_bytes{mountpoint="/",fstype!="rootfs"})
+```
+
 :blue_square: __amtool and promtool__ \
 To check the validation of alertmanager.yml
 ```
