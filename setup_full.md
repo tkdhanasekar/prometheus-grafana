@@ -281,21 +281,23 @@ __for Mattermost Notification__
 vim /usr/local/bin/alertmanager/alertmanager.yml
 ```
 ```
-global:
-  resolve_timeout: 5m
 route:
   group_by: ['alertname']
-  group_wait: 10s
-  group_interval: 10s
+  group_wait: 30s
+  group_interval: 5m
   repeat_interval: 24h
-  receiver: 'mattermost'
-route:
   receiver: 'mattermost'
 receivers:
   - name: 'mattermost'
-    slack_configs:/webhook_configs:
-      - api_url: 'https://convo.darthcentral.in/hooks/rtusjdiamjb4pgi3jwhii58gbr'
-        send_resolved: true 
+    slack_configs:
+      - api_url: 'https://<mattermost_url>/hooks/xxxxxxxxxxxxxxxxxxxxxxxx'
+        send_resolved: true
+inhibit_rules:
+  - source_match:
+      severity: 'critical'
+    target_match:
+      severity: 'warning'
+    equal: ['alertname', 'dev', 'instance']
 ```
 
 :blue_square: <ins>**Step 7: create alertmanager rules**</ins>
@@ -391,9 +393,9 @@ promtool check rules /etc/prometheus/rules/alert-rules.yml
 ```
 finally restart and check the status of the services
 ```
-systemctl restart prometheus && systemctl restart node_exporter && systemctl restart alertmanager && systemctl restart grafana-server
+systemctl restart prometheus && systemctl restart node_exporter && systemctl restart alertmanager && systemctl restart grafana-server && systemctl restart blackbox
 ```
 ```
-systemctl status prometheus --no-pager && systemctl status node_exporter --no-pager && systemctl status alertmanager --no-pager && systemctl status grafana-server --no-pager
+systemctl status prometheus --no-pager && systemctl status node_exporter --no-pager && systemctl status alertmanager --no-pager && systemctl status grafana-server --no-pager && systemctl status blackbox --no-pager
 ```
 

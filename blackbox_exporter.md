@@ -43,10 +43,7 @@ WantedBy=multi-user.target
 ```
 daemon-reload, start, enable the service
 ```
-systemctl daemon-reload
-systemctl start blackbox
-systemctl enable blackbox
-systemctl status blackbox
+systemctl daemon-reload && systemctl start blackbox && systemctl enable blackbox && systemctl status blackbox --no-pager
 ```
 
 In Prometheus server
@@ -74,11 +71,10 @@ vim /etc/prometheus/prometheus.yml
       - source_labels: [__param_target]
         target_label: instance
       - target_label: __address__
-        replacement: 192.168.122.164:9115
+        replacement: blackbox_server_ip:9115
 ```
 ```
-systemctl restart prometheus
-systemctl restart grafana-server        
+systemctl restart prometheus && systemctl restart grafana-server        
 ```
 To view the blackbox metrics
 http://server_ip:9115/
@@ -120,41 +116,41 @@ sum by(instance) (probe_http_ssl)
 Alert rule that triggers when the probe_http_status_code is not equal to 200,
 ```
 groups:
-  - name: blackbox-alerts
-    rules:
-      - alert: HTTPStatusNot200
-        expr: probe_http_status_code != 200
-        for: 1m
-        labels:
-          severity: warning
-        annotations:
-          summary: "HTTP status code is not 200 for {{ $labels.instance }}"
-          description: "Target {{ $labels.instance }} returned HTTP status code {{ $value }}. Expected 200."
+- name: blackbox-alerts
+  rules:
+  - alert: HTTPStatusNot200
+    expr: probe_http_status_code != 200
+    for: 1m
+    labels:
+      severity: warning
+    annotations:
+      summary: "HTTP status code is not 200 for {{ $labels.instance }}"
+      description: "Target {{ $labels.instance }} returned HTTP status code {{ $value }}. Expected 200."
 ```
 Alert rule for SSL certificates that are about to expire within the next 30 days
 ```
 groups:
-  - name: ssl-certificate-alerts
-    rules:
-      - alert: SSLCertificateExpiringSoon
-        expr: probe_ssl_earliest_cert_expiry - time() < 30 * 24 * 60 * 60
-        for: 1h
-        labels:
-          severity: warning
-        annotations:
-          summary: "SSL certificate for {{ $labels.instance }} expires soon"
-          description: "The SSL certificate for {{ $labels.instance }} will expire in less than 30 days (on {{ probe_ssl_earliest_cert_expiry | humanizeTimestamp }})."
+- name: ssl-certificate-alerts
+  rules:
+  - alert: SSLCertificateExpiringSoon
+    expr: probe_ssl_earliest_cert_expiry - time() < 30 * 24 * 60 * 60
+    for: 1h
+    labels:
+      severity: warning
+    annotations:
+      summary: "SSL certificate for {{ $labels.instance }} expires soon"
+      description: "The SSL certificate for {{ $labels.instance }} will expire in less than 30 days (on {{ probe_ssl_earliest_cert_expiry | humanizeTimestamp }})."
 ```
 Alert rule for SSL certificates that are about to expire within days
 ```
 - alert: BlackboxSslCertificateWillExpireSoon
-    expr: probe_ssl_earliest_cert_expiry - time() < 86400 * 3
-    for: 0m
-    labels:
-      severity: critical
-    annotations:
-      summary: Blackbox SSL certificate will expire soon (instance {\{ $labels.instance }})
-      description: "SSL certificate expires in 3 days\n  VALUE = {{ $value }}\n  LABELS = {{ $labels }}"
+  expr: probe_ssl_earliest_cert_expiry - time() < 86400 * 3
+  for: 0m
+  labels:
+    severity: critical
+  annotations:
+    summary: Blackbox SSL certificate will expire soon (instance {\{ $labels.instance }})
+    description: "SSL certificate expires in 3 days\n  VALUE = {{ $value }}\n  LABELS = {{ $labels }}"
 ```
 
 
