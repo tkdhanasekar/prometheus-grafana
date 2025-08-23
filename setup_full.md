@@ -9,8 +9,7 @@
 
 
 
-:blue_square: __Prometheus Installation__
-
+:blue_square: <ins>__Prometheus Installation__</ins>
 ```
 apt update -y && apt upgrade -y
 ```
