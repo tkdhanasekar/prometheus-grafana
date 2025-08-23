@@ -9,7 +9,7 @@
 
 
 
-:blue_square: <u>**Prometheus Installation**</u>
+:blue_square: <u>__Prometheus Installation__</u>
 ```
 apt update -y && apt upgrade -y
 ```
