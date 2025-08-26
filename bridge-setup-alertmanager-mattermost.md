@@ -56,6 +56,7 @@ def alertmanager_webhook():
 
         alertname = labels.get("alertname", "Unnamed Alert")
         instance = labels.get("instance", "unknown")
+        job = labels.get("job", "unknown")
         severity = labels.get("severity", "unknown")
 
         description = annotations.get("description", "")
@@ -63,6 +64,7 @@ def alertmanager_webhook():
 
         msg = f"### [{status}] {alertname}\n"
         msg += f"- **Instance**: `{instance}`\n"
+        msg += f"- **Job**: `{job}`\n"
         msg += f"- **Severity**: `{severity}`\n"
         if summary:
             msg += f"- **Summary**: {summary}\n"
