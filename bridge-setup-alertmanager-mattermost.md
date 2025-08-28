@@ -102,12 +102,25 @@ give the webhook_config url as http://<bridge-host:7777>/alert in the alertmanag
 vim /usr/local/bin/alertmanager/alertmanager.yml
 ```
 ```
+route:
+  group_by: ['alertname']
+  group_wait: 30s
+  group_interval: 5m
+  repeat_interval: 1h
+  receiver: 'mattermost-webhook'
 receivers:
   - name: mattermost-webhook
     webhook_configs:
-      - url: http://<bridge-host>:7777/alert
-route:
-  receiver: mattermost-webhook
+      - url: http://alertmanager_server_ip:7777/alert
+        send_resolved: true
+
+inhibit_rules:
+  - source_match:
+      severity: 'critical'
+    target_match:
+      severity: 'warning'
+    equal: ['alertname', 'dev', 'instance']
+
 ```
 :wq!
 restart the alertmanager service
