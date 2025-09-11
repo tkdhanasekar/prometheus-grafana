@@ -13,6 +13,8 @@ cd blackbox_exporter-0.27.0.linux-amd64
 create the file
 ```
 vim monitor_website.yml
+```
+```
 modules:
   http_2xx_example:
     prober: http
@@ -21,6 +23,13 @@ modules:
       valid_http_versions: ["HTTP/1.1", "HTTP/2.0"]
       valid_status_codes: [200]  # Defaults to 2xx
       method: GET
+      headers:
+        User-Agent: "Blackbox"
+      fail_if_ssl: false
+      fail_if_not_ssl: false
+      follow_redirects: true
+      preferred_ip_protocol: "ip4"
+
 ```
 create the service file for blackbox 
 ```
